@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  radar:
+    build: .
+    container_name: logoper-radar
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - radar_data:/data
+    environment:
+      # ⚠️  Обязательно смените перед деплоем!
+      - ADMIN_LOGIN=admin
+      - ADMIN_PASSWORD=radar2026
+      - SECRET_KEY=change-me-to-a-long-random-string-32chars
+      - TOKEN_EXPIRE_HOURS=72
+      - DB_PATH=/data/radar.db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/stats"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  radar_data:
